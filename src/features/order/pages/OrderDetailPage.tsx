@@ -1,35 +1,23 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { parseApiError } from '@/services'
 import { orderService } from '../services/orderService'
-import type { OrderResponse } from '../types/order.types'
+import { useOrderPolling } from '@/hooks/useOrderPolling'
 import '@/app/styles/order.css'
 
 export default function OrderDetailPage() {
     const { id } = useParams<{ id: string }>()
-    const [order, setOrder] = useState<OrderResponse | null>(null)
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
+    const { order, loading, error, polling, refresh } = useOrderPolling(id)
     const [cancelling, setCancelling] = useState(false)
     const [cancelError, setCancelError] = useState<string | null>(null)
-
-    useEffect(() => {
-        if (!id) return
-        setLoading(true)
-        orderService
-            .findById(id)
-            .then(setOrder)
-            .catch((err) => setError(parseApiError(err).message))
-            .finally(() => setLoading(false))
-    }, [id])
 
     async function handleCancel() {
         if (!order) return
         setCancelling(true)
         setCancelError(null)
         try {
-            const updated = await orderService.cancel(order.id)
-            setOrder(updated)
+            await orderService.cancel(order.id)
+            refresh()
         } catch (err) {
             setCancelError(parseApiError(err).message)
         } finally {
@@ -63,20 +51,45 @@ export default function OrderDetailPage() {
                             Placed on {new Date(order.createdAt).toLocaleDateString('pt-BR')}
                         </p>
                     </div>
-                    <span className={`order-status order-status--${order.status.toLowerCase()}`}>
-                        {order.status.replace('_', ' ')}
-                    </span>
-                </div>
-
-                {order.failureReason && (
-                    <div className="order-detail__failure">
-                        <strong>Failure reason:</strong> {order.failureReason}
+                    <div className="order-detail__status-wrap">
+                        {polling && (
+                            <span
+                                className="order-detail__polling-indicator"
+                                aria-label="Checking for status updates"
+                                title="Checking for status updates…"
+                            />
+                        )}
+                        <span className={`order-status order-status--${order.status.toLowerCase()}`}>
+                            {order.status.replace(/_/g, ' ')}
+                        </span>
                     </div>
-                )}
+                </div>
 
                 {order.status === 'AWAITING_PAYMENT' && (
                     <div className="order-detail__awaiting-notice">
-                        Your order is awaiting payment confirmation. This may take a few moments.
+                        <strong>Awaiting payment confirmation.</strong> Your order was received and
+                        is being processed. This page updates automatically.
+                    </div>
+                )}
+
+                {order.status === 'CONFIRMED' && (
+                    <div className="order-detail__confirmed-notice">
+                        <strong>Order confirmed!</strong> Your payment was accepted and the order
+                        is being prepared.
+                    </div>
+                )}
+
+                {order.status === 'CANCELLED' && (
+                    <div className="order-detail__cancelled-notice">
+                        <strong>Order cancelled.</strong> This order has been cancelled and no
+                        charge was made.
+                    </div>
+                )}
+
+                {order.status === 'PAYMENT_FAILED' && (
+                    <div className="order-detail__failure">
+                        <strong>Payment failed.</strong>
+                        {order.failureReason ? ` Reason: ${order.failureReason}` : ''}
                     </div>
                 )}
 
