@@ -3,6 +3,7 @@ import { apiClient } from './apiClient'
 import { parseApiError } from './errorHandler'
 import { tokenStorage } from '@/features/auth/utils/tokenStorage'
 import { authService } from '@/features/auth/services/authService'
+import { useNotificationStore } from '@/store/notificationStore'
 
 let isRefreshing = false
 let pendingQueue: Array<{ resolve: (token: string) => void; reject: (err: unknown) => void }> = []
@@ -55,6 +56,7 @@ export function setupInterceptors(): void {
                 } catch (refreshError) {
                     flushQueue(null, refreshError)
                     tokenStorage.clear()
+                    useNotificationStore.getState().push('error', 'Session expired. Please sign in again.')
                     window.location.href = '/login'
                     return Promise.reject(parseApiError(refreshError))
                 } finally {
