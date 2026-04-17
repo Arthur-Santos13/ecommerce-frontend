@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/context/AuthContext'
 import { parseApiError } from '@/services'
-import { Skeleton } from '@/shared'
+import { ErrorState, Skeleton } from '@/shared'
 import { orderService } from '../services/orderService'
 import type { OrderResponse } from '../types/order.types'
 import '@/app/styles/order.css'
@@ -60,7 +60,7 @@ export default function OrderListPage() {
             </div>
         )
 
-    if (error) return <p className="order-list__status order-list__status--error">{error}</p>
+    if (error) return <ErrorState message={error} onRetry={() => fetchOrders()} />
 
     return (
         <div className="order-list">
