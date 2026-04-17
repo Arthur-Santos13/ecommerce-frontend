@@ -142,18 +142,28 @@ export default function OrderDetailPage() {
                     </tfoot>
                 </table>
 
-                {canCancel && (
+                {(canCancel || !polling) && (
                     <div className="order-detail__actions">
                         {cancelError && (
                             <p className="order-detail__cancel-error">{cancelError}</p>
                         )}
-                        <button
-                            className="order-detail__cancel-btn"
-                            disabled={cancelling}
-                            onClick={() => void handleCancel()}
-                        >
-                            {cancelling ? 'Cancelling…' : 'Cancel Order'}
-                        </button>
+                        {!polling && (
+                            <button
+                                className="order-detail__refresh-btn"
+                                onClick={refresh}
+                            >
+                                Refresh
+                            </button>
+                        )}
+                        {canCancel && (
+                            <button
+                                className="order-detail__cancel-btn"
+                                disabled={cancelling}
+                                onClick={() => void handleCancel()}
+                            >
+                                {cancelling ? 'Cancelling…' : 'Cancel Order'}
+                            </button>
+                        )}
                     </div>
                 )}
             </div>
