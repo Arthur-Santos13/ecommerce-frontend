@@ -15,6 +15,7 @@ export interface RefreshRequest {
 }
 
 export interface AuthUser {
+    id: string
     username: string
     roles: string[]
     exp: number
