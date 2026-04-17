@@ -99,7 +99,7 @@ npm run preview
 - [x] 5. Carrinho — estado global com Zustand, persistência em localStorage, add/remove/update quantity, badge no header, CartPage com total
 - [x] 6. Order — criação de pedido a partir do carrinho, listagem por cliente, detalhe com itens e total, cancelamento, feedback de status (AWAITING_PAYMENT, CONFIRMED, PAYMENT_FAILED, CANCELLED)
 - [x] 7. Consistência eventual — polling, estados intermediários de pedido
-- [ ] 8. UX para sistema assíncrono — loading states, skeleton, feedback de operações assíncronas
+- [x] 8. UX para sistema assíncrono — loading states, skeleton, feedback de operações assíncronas
 - [ ] 9. Notificações — toast em tempo real via SSE/polling
 - [ ] 10. Segurança frontend — sanitização, CSRF, headers, renovação de token
 - [ ] 11. Integração final com o backend — validação end-to-end de todos os fluxos

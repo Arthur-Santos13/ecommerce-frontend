@@ -434,6 +434,11 @@
     cursor: not-allowed;
 }
 
+.product-detail__add-to-cart--added {
+    background: var(--color-success-emphasis, #1a7f37);
+    cursor: default;
+}
+
 .product-detail__inventory {
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
@@ -468,4 +473,48 @@
     color: var(--color-text-muted);
     border-top: 1px solid var(--color-border-muted);
     padding-top: var(--spacing-4);
+}
+
+/* ─── Skeletons ─────────────────────────────────────── */
+.product-card--skeleton {
+    pointer-events: none;
+    cursor: default;
+}
+
+.product-card--skeleton:hover {
+    border-color: var(--color-border);
+    box-shadow: none;
+}
+
+.product-card--skeleton .product-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+}
+
+.product-card--skeleton .product-card__footer {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-2);
+}
+
+.product-detail__skeleton-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    margin-bottom: var(--spacing-6);
+}
+
+.product-detail__skeleton-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+}
+
+.product-detail__skeleton-pricing {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    padding: var(--spacing-4) var(--spacing-6);
+    border-top: 1px solid var(--color-border-muted);
 }

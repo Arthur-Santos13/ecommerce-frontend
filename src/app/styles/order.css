@@ -395,3 +395,63 @@
     border-color: var(--color-accent-fg);
     color: var(--color-accent-fg);
 }
+
+/* ─── Skeletons ──────────────────────────────────────── */
+.order-list__skeleton-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid var(--color-border-default);
+    gap: 1rem;
+}
+
+.order-list__skeleton-item:last-child {
+    border-bottom: none;
+}
+
+.order-list__skeleton-main {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.order-list__skeleton-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.order-detail__skeleton-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.order-detail__skeleton-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--color-border-default);
+}
+
+.order-detail__skeleton-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.order-detail__skeleton-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    border-bottom: 1px solid var(--color-border-muted);
+    gap: 1rem;
+}
+
+.order-detail__skeleton-row:last-child {
+    border-bottom: none;
+}

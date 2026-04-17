@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { parseApiError } from '@/services'
+import { ErrorState, Skeleton } from '@/shared'
 import ProductCard from '../components/ProductCard'
 import ProductFilters from '../components/ProductFilters'
 import type { CategoryResponse, PageResponse, ProductFilter, ProductResponse } from '../types/product.types'
@@ -94,11 +95,29 @@ export default function ProductListPage() {
                     </div>
                 </div>
 
-                {loading && <p className="product-list-page__status">Loading…</p>}
+                {loading && !page && (
+                    <ul className="product-grid" aria-busy="true" aria-label="Loading products">
+                        {Array.from({ length: 8 }).map((_, i) => (
+                            <li key={i} className="product-card product-card--skeleton">
+                                <div className="product-card__body">
+                                    <Skeleton height="0.75rem" width="40%" />
+                                    <Skeleton height="1.125rem" />
+                                    <Skeleton height="0.875rem" />
+                                    <Skeleton height="0.875rem" width="70%" />
+                                </div>
+                                <div className="product-card__footer">
+                                    <Skeleton height="1rem" width="5rem" />
+                                    <Skeleton height="1rem" width="4rem" />
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                )}
                 {error && (
-                    <p className="product-list-page__status product-list-page__status--error">
-                        {error}
-                    </p>
+                    <ErrorState
+                        message={error}
+                        onRetry={() => fetchProducts(filter)}
+                    />
                 )}
                 {!loading && !error && page && (
                     <>

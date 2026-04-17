@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { parseApiError } from '@/services'
+import { ErrorState, Skeleton } from '@/shared'
 import { useCartStore } from '@/store/cartStore'
 import type { ProductResponse } from '../types/product.types'
 import { productService } from '../services/productService'
@@ -13,9 +14,12 @@ export default function ProductDetailPage() {
     const [error, setError] = useState<string | null>(null)
     const addItem = useCartStore((s) => s.addItem)
 
-    useEffect(() => {
+    const [added, setAdded] = useState(false)
+
+    const fetchProduct = useCallback(() => {
         if (!id) return
         setLoading(true)
+        setError(null)
         productService
             .findById(id)
             .then(setProduct)
@@ -23,8 +27,44 @@ export default function ProductDetailPage() {
             .finally(() => setLoading(false))
     }, [id])
 
-    if (loading) return <p className="product-detail__status">Loading…</p>
-    if (error) return <p className="product-detail__status product-detail__status--error">{error}</p>
+    useEffect(() => {
+        fetchProduct()
+    }, [fetchProduct])
+
+    if (loading)
+        return (
+            <div className="product-detail">
+                <div className="product-detail__skeleton-breadcrumb">
+                    <Skeleton height="0.875rem" width="4rem" />
+                    <Skeleton height="0.875rem" width="8rem" />
+                </div>
+                <div className="product-detail__card">
+                    <div className="product-detail__header">
+                        <div className="product-detail__skeleton-header">
+                            <Skeleton height="0.75rem" width="5rem" />
+                            <Skeleton height="1.375rem" width="14rem" />
+                            <Skeleton height="0.75rem" width="6rem" />
+                        </div>
+                        <Skeleton height="1.5rem" width="6rem" borderRadius="12px" />
+                    </div>
+                    <div style={{ padding: '1rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        <Skeleton height="0.875rem" />
+                        <Skeleton height="0.875rem" width="80%" />
+                    </div>
+                    <div className="product-detail__skeleton-pricing">
+                        <Skeleton height="1.75rem" width="6rem" />
+                        <Skeleton height="2.25rem" width="8rem" borderRadius="6px" />
+                    </div>
+                </div>
+            </div>
+        )
+
+    if (error)
+        return (
+            <div className="product-detail">
+                <ErrorState message={error} onRetry={fetchProduct} />
+            </div>
+        )
     if (!product) return null
 
     const inStock = product.availableQuantity > 0
@@ -67,18 +107,20 @@ export default function ProductDetailPage() {
                         })}
                     </span>
                     <button
-                        className="product-detail__add-to-cart"
-                        disabled={!inStock}
-                        onClick={() =>
+                        className={`product-detail__add-to-cart${added ? ' product-detail__add-to-cart--added' : ''}`}
+                        disabled={!inStock || added}
+                        onClick={() => {
                             addItem({
                                 productId: product.id,
                                 name: product.name,
                                 price: product.price,
                                 availableQuantity: product.availableQuantity,
                             })
-                        }
+                            setAdded(true)
+                            setTimeout(() => setAdded(false), 1500)
+                        }}
                     >
-                        {inStock ? 'Add to Cart' : 'Out of Stock'}
+                        {added ? 'Added!' : (inStock ? 'Add to Cart' : 'Out of Stock')}
                     </button>
                 </div>
 
