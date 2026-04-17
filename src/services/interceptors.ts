@@ -14,13 +14,14 @@ function flushQueue(token: string | null, error: unknown) {
 }
 
 export function setupInterceptors(): void {
-    // ── Request: inject JWT ────────────────────────────────────────────
+    // ── Request: inject JWT + correlation id ─────────────────────────
     apiClient.interceptors.request.use(
         (config) => {
             const token = tokenStorage.getAccessToken()
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`
             }
+            config.headers['X-Correlation-Id'] = crypto.randomUUID()
             return config
         },
         (error) => Promise.reject(error),
