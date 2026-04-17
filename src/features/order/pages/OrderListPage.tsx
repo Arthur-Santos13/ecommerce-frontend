@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/context/AuthContext'
 import { parseApiError } from '@/services'
@@ -12,7 +12,7 @@ export default function OrderListPage() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
-    useEffect(() => {
+    const fetchOrders = useCallback(() => {
         if (!user) return
         setLoading(true)
         orderService
@@ -22,12 +22,21 @@ export default function OrderListPage() {
             .finally(() => setLoading(false))
     }, [user])
 
+    useEffect(() => {
+        fetchOrders()
+    }, [fetchOrders])
+
     if (loading) return <p className="order-list__status">Loading orders…</p>
     if (error) return <p className="order-list__status order-list__status--error">{error}</p>
 
     return (
         <div className="order-list">
-            <h1 className="order-list__title">My Orders</h1>
+            <div className="order-list__heading">
+                <h1 className="order-list__title">My Orders</h1>
+                <button className="order-list__refresh-btn" onClick={fetchOrders}>
+                    Refresh
+                </button>
+            </div>
 
             {orders.length === 0 ? (
                 <div className="order-list__empty">
@@ -50,7 +59,7 @@ export default function OrderListPage() {
                             </div>
                             <div className="order-list__item-meta">
                                 <span className={`order-status order-status--${order.status.toLowerCase()}`}>
-                                    {order.status.replace('_', ' ')}
+                                    {order.status.replace(/_/g, ' ')}
                                 </span>
                                 <span className="order-list__item-total">
                                     {order.totalAmount.toLocaleString('pt-BR', {
