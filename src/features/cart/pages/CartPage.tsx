@@ -4,12 +4,14 @@ import { useCartStore } from '@/store/cartStore'
 import { useAuthContext } from '@/features/auth/context/AuthContext'
 import { orderService } from '@/features/order/services/orderService'
 import { parseApiError } from '@/services'
+import { useNotificationStore } from '@/store/notificationStore'
 import '@/app/styles/cart.css'
 
 export default function CartPage() {
     const { items, totalItems, totalPrice, removeItem, updateQuantity, clearCart } = useCartStore()
     const { user } = useAuthContext()
     const navigate = useNavigate()
+    const push = useNotificationStore((s) => s.push)
     const [submitting, setSubmitting] = useState(false)
     const [orderError, setOrderError] = useState<string | null>(null)
 
@@ -23,9 +25,12 @@ export default function CartPage() {
                 items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
             })
             clearCart()
+            push('info', 'Order placed! Waiting for payment confirmation.')
             navigate(`/orders/${order.id}`)
         } catch (err) {
-            setOrderError(parseApiError(err).message)
+            const msg = parseApiError(err).message
+            setOrderError(msg)
+            push('error', msg)
         } finally {
             setSubmitting(false)
         }

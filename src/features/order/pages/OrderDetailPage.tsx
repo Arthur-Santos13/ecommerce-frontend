@@ -4,11 +4,13 @@ import { parseApiError } from '@/services'
 import { ErrorState, Skeleton } from '@/shared'
 import { orderService } from '../services/orderService'
 import { useOrderPolling } from '@/hooks/useOrderPolling'
+import { useNotificationStore } from '@/store/notificationStore'
 import '@/app/styles/order.css'
 
 export default function OrderDetailPage() {
     const { id } = useParams<{ id: string }>()
     const { order, loading, error, polling, refresh } = useOrderPolling(id)
+    const push = useNotificationStore((s) => s.push)
     const [cancelling, setCancelling] = useState(false)
     const [cancelError, setCancelError] = useState<string | null>(null)
 
@@ -18,9 +20,12 @@ export default function OrderDetailPage() {
         setCancelError(null)
         try {
             await orderService.cancel(order.id)
+            push('success', 'Order cancelled successfully.')
             refresh()
         } catch (err) {
-            setCancelError(parseApiError(err).message)
+            const msg = parseApiError(err).message
+            setCancelError(msg)
+            push('error', `Failed to cancel order: ${msg}`)
         } finally {
             setCancelling(false)
         }
