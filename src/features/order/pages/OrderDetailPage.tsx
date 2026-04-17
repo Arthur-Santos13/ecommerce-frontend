@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { parseApiError } from '@/services'
+import { Skeleton } from '@/shared'
 import { orderService } from '../services/orderService'
 import { useOrderPolling } from '@/hooks/useOrderPolling'
 import '@/app/styles/order.css'
@@ -25,7 +26,33 @@ export default function OrderDetailPage() {
         }
     }
 
-    if (loading) return <p className="order-detail__status">Loading order…</p>
+    if (loading)
+        return (
+            <div className="order-detail">
+                <div className="order-detail__skeleton-breadcrumb">
+                    <Skeleton height="0.875rem" width="5rem" />
+                    <Skeleton height="0.875rem" width="3rem" />
+                </div>
+                <div className="order-detail__card" aria-busy="true" aria-label="Loading order">
+                    <div className="order-detail__skeleton-header">
+                        <div className="order-detail__skeleton-header-left">
+                            <Skeleton height="1.125rem" width="12rem" />
+                            <Skeleton height="0.8125rem" width="8rem" />
+                        </div>
+                        <Skeleton height="1.25rem" width="7rem" borderRadius="12px" />
+                    </div>
+                    {[1, 2, 3].map((i) => (
+                        <div key={i} className="order-detail__skeleton-row">
+                            <Skeleton height="0.875rem" width="45%" />
+                            <Skeleton height="0.875rem" width="8%" />
+                            <Skeleton height="0.875rem" width="5%" />
+                            <Skeleton height="0.875rem" width="8%" />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+
     if (error) return <p className="order-detail__status order-detail__status--error">{error}</p>
     if (!order) return null
 
