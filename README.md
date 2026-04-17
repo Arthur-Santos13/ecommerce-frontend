@@ -93,7 +93,7 @@ npm run preview
 ## Roadmap
 
 - [x] 1. Setup — Vite + React + TypeScript, estrutura de pastas, React Router, estilos globais
-- [ ] 2. Integração base — cliente HTTP (Axios), interceptors, variáveis de ambiente
+- [x] 2. Integração base — cliente HTTP (Axios), interceptors, variáveis de ambiente
 - [ ] 3. Autenticação — login, register, JWT, rotas protegidas
 - [ ] 4. Product — listagem, detalhe, busca e filtros
 - [ ] 5. Carrinho — estado global com Zustand, persistência local
