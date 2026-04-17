@@ -1,6 +1,8 @@
 import { Outlet } from 'react-router-dom'
 import Header from './Header'
+import { ToastContainer } from '@/features/notification'
 import '@/app/styles/layout.css'
+import '@/app/styles/notification.css'
 
 export default function RootLayout() {
     return (
@@ -12,5 +14,8 @@ export default function RootLayout() {
             <footer className="layout__footer">
                 &copy; {new Date().getFullYear()} ShopCommerce. All rights reserved.
             </footer>
-            )
+            <ToastContainer />
+        </div>
+    )
 }
+
