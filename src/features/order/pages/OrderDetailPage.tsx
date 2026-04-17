@@ -10,6 +10,8 @@ export default function OrderDetailPage() {
     const [order, setOrder] = useState<OrderResponse | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [cancelling, setCancelling] = useState(false)
+    const [cancelError, setCancelError] = useState<string | null>(null)
 
     useEffect(() => {
         if (!id) return
@@ -21,9 +23,25 @@ export default function OrderDetailPage() {
             .finally(() => setLoading(false))
     }, [id])
 
+    async function handleCancel() {
+        if (!order) return
+        setCancelling(true)
+        setCancelError(null)
+        try {
+            const updated = await orderService.cancel(order.id)
+            setOrder(updated)
+        } catch (err) {
+            setCancelError(parseApiError(err).message)
+        } finally {
+            setCancelling(false)
+        }
+    }
+
     if (loading) return <p className="order-detail__status">Loading order…</p>
     if (error) return <p className="order-detail__status order-detail__status--error">{error}</p>
     if (!order) return null
+
+    const canCancel = order.status === 'AWAITING_PAYMENT'
 
     return (
         <div className="order-detail">
@@ -53,6 +71,12 @@ export default function OrderDetailPage() {
                 {order.failureReason && (
                     <div className="order-detail__failure">
                         <strong>Failure reason:</strong> {order.failureReason}
+                    </div>
+                )}
+
+                {order.status === 'AWAITING_PAYMENT' && (
+                    <div className="order-detail__awaiting-notice">
+                        Your order is awaiting payment confirmation. This may take a few moments.
                     </div>
                 )}
 
@@ -104,6 +128,21 @@ export default function OrderDetailPage() {
                         </tr>
                     </tfoot>
                 </table>
+
+                {canCancel && (
+                    <div className="order-detail__actions">
+                        {cancelError && (
+                            <p className="order-detail__cancel-error">{cancelError}</p>
+                        )}
+                        <button
+                            className="order-detail__cancel-btn"
+                            disabled={cancelling}
+                            onClick={() => void handleCancel()}
+                        >
+                            {cancelling ? 'Cancelling…' : 'Cancel Order'}
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     )
