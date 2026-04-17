@@ -1,9 +1,11 @@
 import { NavLink } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/context/AuthContext'
+import { useCartStore } from '@/store/cartStore'
 import '@/app/styles/header.css'
 
 export default function Header() {
     const { user, logout } = useAuthContext()
+    const totalItems = useCartStore((s) => s.totalItems)
 
     return (
         <header className="header">
@@ -40,10 +42,13 @@ export default function Header() {
                             <NavLink
                                 to="/cart"
                                 className={({ isActive }) =>
-                                    `header__nav-link${isActive ? ' header__nav-link--active' : ''}`
+                                    `header__nav-link header__cart-link${isActive ? ' header__nav-link--active' : ''}`
                                 }
                             >
                                 Cart
+                                {totalItems > 0 && (
+                                    <span className="header__cart-badge">{totalItems}</span>
+                                )}
                             </NavLink>
                             <span className="header__nav-link header__username">{user.username}</span>
                             <button
