@@ -1,0 +1,200 @@
+/* ─── CSS Reset & Base ─────────────────────────────── */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ─── CSS Custom Properties — Light (default) ──────── */
+:root,
+[data-theme='light'] {
+    /* Canvas */
+    --color-background: #ffffff;
+    --color-canvas-subtle: #f6f8fa;
+    --color-surface: #ffffff;
+
+    /* Border */
+    --color-border: #d0d7de;
+    --color-border-muted: #d8dee4;
+
+    /* Text */
+    --color-text: #1f2328;
+    --color-text-muted: #656d76;
+    --color-text-link: #0969da;
+
+    /* Accent / Primary */
+    --color-primary: #0969da;
+    --color-primary-hover: #0550ae;
+    --color-primary-fg: #ffffff;
+
+    /* Semantic */
+    --color-success: #1a7f37;
+    --color-success-subtle: #dafbe1;
+    --color-warning: #9a6700;
+    --color-warning-subtle: #fff8c5;
+    --color-danger: #d1242f;
+    --color-danger-subtle: #ffebe9;
+
+    /* Header (always dark even in light mode — matches GitHub) */
+    --color-header-bg: #24292f;
+    --color-header-text: #f0f6fc;
+    --color-header-text-muted: #7d8590;
+    --color-header-border: #444c56;
+    --color-header-logo: #f0f6fc;
+}
+
+/* ─── CSS Custom Properties — Dark ─────────────────── */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #0d1117;
+        --color-canvas-subtle: #161b22;
+        --color-surface: #0d1117;
+
+        --color-border: #30363d;
+        --color-border-muted: #21262d;
+
+        --color-text: #e6edf3;
+        --color-text-muted: #7d8590;
+        --color-text-link: #2f81f7;
+
+        --color-primary: #2f81f7;
+        --color-primary-hover: #1f6feb;
+        --color-primary-fg: #ffffff;
+
+        --color-success: #3fb950;
+        --color-success-subtle: #0f2d1a;
+        --color-warning: #d29922;
+        --color-warning-subtle: #272115;
+        --color-danger: #f85149;
+        --color-danger-subtle: #2d0f12;
+
+        --color-header-bg: #161b22;
+        --color-header-text: #e6edf3;
+        --color-header-text-muted: #7d8590;
+        --color-header-border: #30363d;
+        --color-header-logo: #e6edf3;
+    }
+}
+
+[data-theme='dark'] {
+    --color-background: #0d1117;
+    --color-canvas-subtle: #161b22;
+    --color-surface: #0d1117;
+
+    --color-border: #30363d;
+    --color-border-muted: #21262d;
+
+    --color-text: #e6edf3;
+    --color-text-muted: #7d8590;
+    --color-text-link: #2f81f7;
+
+    --color-primary: #2f81f7;
+    --color-primary-hover: #1f6feb;
+    --color-primary-fg: #ffffff;
+
+    --color-success: #3fb950;
+    --color-success-subtle: #0f2d1a;
+    --color-warning: #d29922;
+    --color-warning-subtle: #272115;
+    --color-danger: #f85149;
+    --color-danger-subtle: #2d0f12;
+
+    --color-header-bg: #161b22;
+    --color-header-text: #e6edf3;
+    --color-header-text-muted: #7d8590;
+    --color-header-border: #30363d;
+    --color-header-logo: #e6edf3;
+}
+
+/* Typography */
+--font-sans: 'Inter',
+system-ui,
+-apple-system,
+sans-serif;
+--font-size-sm: 0.875rem;
+--font-size-base: 1rem;
+--font-size-lg: 1.125rem;
+--font-size-xl: 1.25rem;
+--font-size-2xl: 1.5rem;
+--font-size-3xl: 1.875rem;
+
+/* Spacing */
+--spacing-1: 0.25rem;
+--spacing-2: 0.5rem;
+--spacing-3: 0.75rem;
+--spacing-4: 1rem;
+--spacing-6: 1.5rem;
+--spacing-8: 2rem;
+--spacing-12: 3rem;
+--spacing-16: 4rem;
+
+/* Layout */
+--container-max: 1280px;
+--header-height: 64px;
+
+/* Radius */
+--radius-sm: 4px;
+--radius-md: 8px;
+--radius-lg: 12px;
+
+/* Shadow */
+--shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+--shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+--shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+/* Transitions */
+--transition-fast: 150ms ease;
+--transition-normal: 250ms ease;
+}
+
+/* ─── Base ──────────────────────────────────────────── */
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-base);
+    color: var(--color-text);
+    background-color: var(--color-background);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button {
+    cursor: pointer;
+    font-family: inherit;
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+/* ─── Utility ───────────────────────────────────────── */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
