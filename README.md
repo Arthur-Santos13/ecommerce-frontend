@@ -95,7 +95,7 @@ npm run preview
 - [x] 1. Setup — Vite + React + TypeScript, estrutura de pastas, React Router, estilos globais
 - [x] 2. Integração base — cliente HTTP (Axios), interceptors, variáveis de ambiente
 - [x] 3. Autenticação — login, register, JWT, rotas protegidas
-- [ ] 4. Product — listagem, detalhe, busca e filtros
+- [x] 4. Product — types + service layer, listagem com grid, filtros (nome, categoria, faixa de preço, in stock), paginação, ordenação, página de detalhe
 - [ ] 5. Carrinho — estado global com Zustand, persistência local
 - [ ] 6. Order — criação de pedido, listagem, detalhe
 - [ ] 7. Consistência eventual — polling, estados intermediários de pedido
