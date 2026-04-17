@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { parseApiError } from '@/services'
-import { Skeleton } from '@/shared'
+import { ErrorState, Skeleton } from '@/shared'
 import ProductCard from '../components/ProductCard'
 import ProductFilters from '../components/ProductFilters'
 import type { CategoryResponse, PageResponse, ProductFilter, ProductResponse } from '../types/product.types'
@@ -114,9 +114,10 @@ export default function ProductListPage() {
                     </ul>
                 )}
                 {error && (
-                    <p className="product-list-page__status product-list-page__status--error">
-                        {error}
-                    </p>
+                    <ErrorState
+                        message={error}
+                        onRetry={() => fetchProducts(filter)}
+                    />
                 )}
                 {!loading && !error && page && (
                     <>

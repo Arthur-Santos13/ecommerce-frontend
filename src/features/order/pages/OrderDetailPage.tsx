@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { parseApiError } from '@/services'
-import { Skeleton } from '@/shared'
+import { ErrorState, Skeleton } from '@/shared'
 import { orderService } from '../services/orderService'
 import { useOrderPolling } from '@/hooks/useOrderPolling'
 import '@/app/styles/order.css'
@@ -53,7 +53,12 @@ export default function OrderDetailPage() {
             </div>
         )
 
-    if (error) return <p className="order-detail__status order-detail__status--error">{error}</p>
+    if (error)
+        return (
+            <div className="order-detail">
+                <ErrorState message={error} onRetry={refresh} />
+            </div>
+        )
     if (!order) return null
 
     const canCancel = order.status === 'AWAITING_PAYMENT'

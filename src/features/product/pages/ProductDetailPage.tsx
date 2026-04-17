@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { parseApiError } from '@/services'
-import { Skeleton } from '@/shared'
+import { ErrorState, Skeleton } from '@/shared'
 import { useCartStore } from '@/store/cartStore'
 import type { ProductResponse } from '../types/product.types'
 import { productService } from '../services/productService'
@@ -57,7 +57,12 @@ export default function ProductDetailPage() {
             </div>
         )
 
-    if (error) return <p className="product-detail__status product-detail__status--error">{error}</p>
+    if (error)
+        return (
+            <div className="product-detail">
+                <ErrorState message={error} onRetry={fetchProduct} />
+            </div>
+        )
     if (!product) return null
 
     const inStock = product.availableQuantity > 0
