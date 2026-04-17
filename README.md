@@ -101,7 +101,7 @@ npm run preview
 - [x] 7. Consistência eventual — polling, estados intermediários de pedido
 - [x] 8. UX para sistema assíncrono — loading states, skeleton, feedback de operações assíncronas
 - [x] 9. Notificações — toast em tempo real via SSE/polling
-- [ ] 10. Segurança frontend — sanitização, CSRF, headers, renovação de token
+- [x] 10. Segurança frontend — sanitização, CSRF, headers, renovação de token
 - [ ] 11. Integração final com o backend — validação end-to-end de todos os fluxos
 - [ ] 12. Testes — unitários, integração e E2E
 - [ ] 13. README final
