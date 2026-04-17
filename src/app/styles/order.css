@@ -262,3 +262,48 @@
     border-top: 2px solid var(--color-border-default);
     background: var(--color-canvas-subtle);
 }
+
+.order-detail__awaiting-notice {
+    margin: 0 1.5rem 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--color-attention-subtle);
+    color: var(--color-attention-fg);
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+.order-detail__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--color-border-default);
+}
+
+.order-detail__cancel-error {
+    font-size: 0.875rem;
+    color: var(--color-danger-fg);
+    margin: 0;
+}
+
+.order-detail__cancel-btn {
+    padding: 0.5rem 1.25rem;
+    background: none;
+    border: 1px solid var(--color-danger-fg);
+    color: var(--color-danger-fg);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.order-detail__cancel-btn:hover:not(:disabled) {
+    background: var(--color-danger-subtle);
+}
+
+.order-detail__cancel-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
