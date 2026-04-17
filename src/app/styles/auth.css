@@ -1,0 +1,97 @@
+.auth-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - var(--header-height));
+    padding: var(--spacing-6);
+    background-color: var(--color-canvas-subtle);
+}
+
+.auth-form {
+    width: 100%;
+    max-width: 340px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-8) var(--spacing-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+.auth-form__title {
+    font-size: var(--font-size-2xl);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-2);
+    text-align: center;
+}
+
+.auth-form__label {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.auth-form__input {
+    width: 100%;
+    padding: var(--spacing-2) var(--spacing-3);
+    font-size: var(--font-size-sm);
+    font-family: inherit;
+    color: var(--color-text);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.auth-form__input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.15);
+}
+
+.auth-form__error {
+    font-size: var(--font-size-sm);
+    color: var(--color-danger);
+    background-color: var(--color-danger-subtle);
+    border: 1px solid var(--color-danger);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-2) var(--spacing-3);
+}
+
+.auth-form__submit {
+    width: 100%;
+    margin-top: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-4);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-primary-fg);
+    background-color: var(--color-primary);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition-fast);
+}
+
+.auth-form__submit:hover:not(:disabled) {
+    background-color: var(--color-primary-hover);
+}
+
+.auth-form__submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.auth-form__footer {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    text-align: center;
+}
+
+.auth-form__footer a {
+    color: var(--color-text-link);
+}
+
+.auth-form__footer a:hover {
+    text-decoration: underline;
+}
