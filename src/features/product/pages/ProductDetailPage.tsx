@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { parseApiError } from '@/services'
+import { useCartStore } from '@/store/cartStore'
 import type { ProductResponse } from '../types/product.types'
 import { productService } from '../services/productService'
 import '@/app/styles/product.css'
@@ -10,6 +11,7 @@ export default function ProductDetailPage() {
     const [product, setProduct] = useState<ProductResponse | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const addItem = useCartStore((s) => s.addItem)
 
     useEffect(() => {
         if (!id) return
@@ -64,6 +66,20 @@ export default function ProductDetailPage() {
                             currency: 'BRL',
                         })}
                     </span>
+                    <button
+                        className="product-detail__add-to-cart"
+                        disabled={!inStock}
+                        onClick={() =>
+                            addItem({
+                                productId: product.id,
+                                name: product.name,
+                                price: product.price,
+                                availableQuantity: product.availableQuantity,
+                            })
+                        }
+                    >
+                        {inStock ? 'Add to Cart' : 'Out of Stock'}
+                    </button>
                 </div>
 
                 <dl className="product-detail__inventory">
