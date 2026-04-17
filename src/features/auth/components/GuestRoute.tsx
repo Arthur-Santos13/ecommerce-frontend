@@ -5,11 +5,11 @@ import { useAuthContext } from '../context/AuthContext'
  * Redirects authenticated users away from public-only pages (login, register).
  */
 export default function GuestRoute() {
-  const { user } = useAuthContext()
+    const { user } = useAuthContext()
 
-  if (user) {
-    return <Navigate to="/" replace />
-  }
+    if (user) {
+        return <Navigate to="/" replace />
+    }
 
-  return <Outlet />
+    return <Outlet />
 }
