@@ -1,4 +1,5 @@
 import { apiClient } from './apiClient'
+import { parseApiError } from './errorHandler'
 
 const TOKEN_KEY = 'access_token'
 
@@ -15,9 +16,8 @@ export function setupInterceptors(): void {
         (error) => Promise.reject(error),
     )
 
-    // ── Response: pass through; error handling delegated to errorHandler ─
+    // ── Response: normalise errors into ApiException ───────────────────
     apiClient.interceptors.response.use(
         (response) => response,
-        (error) => Promise.reject(error),
-    )
+        (error) => Promise.reject(parseApiError(error)),
 }
