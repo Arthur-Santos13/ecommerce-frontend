@@ -14,6 +14,8 @@ export default function ProductDetailPage() {
     const [error, setError] = useState<string | null>(null)
     const addItem = useCartStore((s) => s.addItem)
 
+    const [added, setAdded] = useState(false)
+
     const fetchProduct = useCallback(() => {
         if (!id) return
         setLoading(true)
@@ -105,18 +107,20 @@ export default function ProductDetailPage() {
                         })}
                     </span>
                     <button
-                        className="product-detail__add-to-cart"
-                        disabled={!inStock}
-                        onClick={() =>
+                        className={`product-detail__add-to-cart${added ? ' product-detail__add-to-cart--added' : ''}`}
+                        disabled={!inStock || added}
+                        onClick={() => {
                             addItem({
                                 productId: product.id,
                                 name: product.name,
                                 price: product.price,
                                 availableQuantity: product.availableQuantity,
                             })
-                        }
+                            setAdded(true)
+                            setTimeout(() => setAdded(false), 1500)
+                        }}
                     >
-                        {inStock ? 'Add to Cart' : 'Out of Stock'}
+                        {added ? 'Added!' : (inStock ? 'Add to Cart' : 'Out of Stock')}
                     </button>
                 </div>
 
