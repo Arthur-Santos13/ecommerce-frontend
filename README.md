@@ -96,7 +96,7 @@ npm run preview
 - [x] 2. Integração base — cliente HTTP (Axios), interceptors, variáveis de ambiente
 - [x] 3. Autenticação — login, register, JWT, rotas protegidas
 - [x] 4. Product — types + service layer, listagem com grid, filtros (nome, categoria, faixa de preço, in stock), paginação, ordenação, página de detalhe
-- [ ] 5. Carrinho — estado global com Zustand, persistência local
+- [x] 5. Carrinho — estado global com Zustand, persistência em localStorage, add/remove/update quantity, badge no header, CartPage com total
 - [ ] 6. Order — criação de pedido, listagem, detalhe
 - [ ] 7. Consistência eventual — polling, estados intermediários de pedido
 - [ ] 8. UX para sistema assíncrono — loading states, skeleton, feedback de operações assíncronas
