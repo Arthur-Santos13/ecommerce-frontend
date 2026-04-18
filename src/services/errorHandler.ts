@@ -43,12 +43,20 @@ export function parseApiError(error: unknown): ApiException {
             return new ApiException({ status, message: 'The requested resource was not found.' })
         }
 
+        if (status === 429) {
+            return new ApiException({ status, message: 'Too many requests. Please slow down and try again shortly.' })
+        }
+
         if (status === 422 || status === 400) {
             return new ApiException({
                 status,
                 message: data?.message ?? 'Validation failed.',
                 errors: data?.errors,
             })
+        }
+
+        if (status === 503) {
+            return new ApiException({ status, message: 'Service temporarily unavailable. Please try again in a moment.' })
         }
 
         if (status >= 500) {

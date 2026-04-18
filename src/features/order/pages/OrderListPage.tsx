@@ -16,7 +16,7 @@ export default function OrderListPage() {
     const loadedOnce = useRef(false)
 
     const fetchOrders = useCallback((isRefresh = false) => {
-        if (!user) return
+        if (!user?.id) return
         if (isRefresh) setRefreshing(true)
         else setLoading(true)
         setError(null)
