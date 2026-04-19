@@ -60,40 +60,38 @@ export default function ProductListPage() {
 
     return (
         <div className="product-list-page">
-            <aside className="product-list-page__sidebar">
+            <div className="product-list-page__filterbar">
                 <ProductFilters
                     filter={filter}
                     categories={categories}
                     onApply={handleApply}
                     onReset={handleReset}
                 />
-            </aside>
+                <div className="product-list-page__sort">
+                    <label htmlFor="sort-select" className="product-filters__label">
+                        Sort by
+                    </label>
+                    <select
+                        id="sort-select"
+                        className="product-filters__select"
+                        value={filter.sort ?? 'name,asc'}
+                        onChange={(e) => handleSortChange(e.target.value)}
+                    >
+                        {SORT_OPTIONS.map((o) => (
+                            <option key={o.value} value={o.value}>
+                                {o.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            </div>
 
             <main className="product-list-page__main">
-                <div className="product-list-page__toolbar">
-                    <p className="product-list-page__count">
-                        {page
-                            ? `${page.totalElements} product${page.totalElements !== 1 ? 's' : ''}`
-                            : ''}
-                    </p>
-                    <div className="product-list-page__sort">
-                        <label htmlFor="sort-select" className="product-filters__label">
-                            Sort by
-                        </label>
-                        <select
-                            id="sort-select"
-                            className="product-filters__select"
-                            value={filter.sort ?? 'name,asc'}
-                            onChange={(e) => handleSortChange(e.target.value)}
-                        >
-                            {SORT_OPTIONS.map((o) => (
-                                <option key={o.value} value={o.value}>
-                                    {o.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
+                <p className="product-list-page__count">
+                    {page
+                        ? `${page.totalElements} product${page.totalElements !== 1 ? 's' : ''}`
+                        : ''}
+                </p>
 
                 {loading && !page && (
                     <ul className="product-grid" aria-busy="true" aria-label="Loading products">

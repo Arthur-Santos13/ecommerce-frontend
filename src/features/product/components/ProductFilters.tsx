@@ -22,85 +22,62 @@ export default function ProductFilters({ filter, categories, onApply, onReset }:
 
     return (
         <form className="product-filters" onSubmit={handleSubmit} onReset={() => onReset()}>
-            <h2 className="product-filters__title">Filters</h2>
+            <input
+                className="product-filters__input product-filters__input--name"
+                type="text"
+                value={local.name ?? ''}
+                onChange={(e) => setLocal((p) => ({ ...p, name: e.target.value || undefined }))}
+                placeholder="Search products…"
+                aria-label="Search by name"
+            />
 
-            <div className="product-filters__group">
-                <label className="product-filters__label" htmlFor="filter-name">
-                    Name
-                </label>
-                <input
-                    id="filter-name"
-                    className="product-filters__input"
-                    type="text"
-                    value={local.name ?? ''}
-                    onChange={(e) => setLocal((p) => ({ ...p, name: e.target.value || undefined }))}
-                    placeholder="Search products…"
-                />
-            </div>
+            <select
+                className="product-filters__select product-filters__select--category"
+                value={local.categoryId ?? ''}
+                onChange={(e) =>
+                    setLocal((p) => ({ ...p, categoryId: e.target.value || undefined }))
+                }
+                aria-label="Category"
+            >
+                <option value="">All categories</option>
+                {categories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                        {c.name}
+                    </option>
+                ))}
+            </select>
 
-            <div className="product-filters__group">
-                <label className="product-filters__label" htmlFor="filter-category">
-                    Category
-                </label>
-                <select
-                    id="filter-category"
-                    className="product-filters__select"
-                    value={local.categoryId ?? ''}
-                    onChange={(e) =>
-                        setLocal((p) => ({ ...p, categoryId: e.target.value || undefined }))
-                    }
-                >
-                    <option value="">All categories</option>
-                    {categories.map((c) => (
-                        <option key={c.id} value={c.id}>
-                            {c.name}
-                        </option>
-                    ))}
-                </select>
-            </div>
+            <input
+                className="product-filters__input product-filters__input--price"
+                type="number"
+                min={0}
+                step={0.01}
+                value={local.minPrice ?? ''}
+                onChange={(e) =>
+                    setLocal((p) => ({
+                        ...p,
+                        minPrice: e.target.value ? Number(e.target.value) : undefined,
+                    }))
+                }
+                placeholder="Min $"
+                aria-label="Min price"
+            />
 
-            <div className="product-filters__group product-filters__group--row">
-                <div className="product-filters__col">
-                    <label className="product-filters__label" htmlFor="filter-min">
-                        Min price
-                    </label>
-                    <input
-                        id="filter-min"
-                        className="product-filters__input product-filters__input--sm"
-                        type="number"
-                        min={0}
-                        step={0.01}
-                        value={local.minPrice ?? ''}
-                        onChange={(e) =>
-                            setLocal((p) => ({
-                                ...p,
-                                minPrice: e.target.value ? Number(e.target.value) : undefined,
-                            }))
-                        }
-                        placeholder="0.00"
-                    />
-                </div>
-                <div className="product-filters__col">
-                    <label className="product-filters__label" htmlFor="filter-max">
-                        Max price
-                    </label>
-                    <input
-                        id="filter-max"
-                        className="product-filters__input product-filters__input--sm"
-                        type="number"
-                        min={0}
-                        step={0.01}
-                        value={local.maxPrice ?? ''}
-                        onChange={(e) =>
-                            setLocal((p) => ({
-                                ...p,
-                                maxPrice: e.target.value ? Number(e.target.value) : undefined,
-                            }))
-                        }
-                        placeholder="9999.99"
-                    />
-                </div>
-            </div>
+            <input
+                className="product-filters__input product-filters__input--price"
+                type="number"
+                min={0}
+                step={0.01}
+                value={local.maxPrice ?? ''}
+                onChange={(e) =>
+                    setLocal((p) => ({
+                        ...p,
+                        maxPrice: e.target.value ? Number(e.target.value) : undefined,
+                    }))
+                }
+                placeholder="Max $"
+                aria-label="Max price"
+            />
 
             <label className="product-filters__checkbox">
                 <input
@@ -110,7 +87,7 @@ export default function ProductFilters({ filter, categories, onApply, onReset }:
                         setLocal((p) => ({ ...p, inStock: e.target.checked || undefined }))
                     }
                 />
-                In stock only
+                In stock
             </label>
 
             <div className="product-filters__actions">
