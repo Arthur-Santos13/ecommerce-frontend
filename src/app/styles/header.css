@@ -21,8 +21,13 @@
 .header__logo {
     font-size: var(--font-size-xl);
     font-weight: 700;
-    color: var(--color-header-logo);
+    color: var(--color-primary);
     letter-spacing: -0.5px;
+    transition: opacity var(--transition-fast);
+}
+
+.header__logo:hover {
+    opacity: 0.85;
 }
 
 .header__nav {
