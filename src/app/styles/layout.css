@@ -1,21 +1,59 @@
 .layout {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr;
     min-height: 100vh;
 }
 
 .layout__main {
-    flex: 1;
-    max-width: var(--container-max);
-    width: 100%;
-    margin: 0 auto;
-    padding: var(--spacing-8) var(--spacing-6);
+    padding: var(--spacing-8);
+    overflow-y: auto;
+    min-height: 100vh;
 }
 
-.layout__footer {
-    border-top: 1px solid var(--color-border);
-    padding: var(--spacing-6);
-    text-align: center;
-    font-size: var(--font-size-sm);
-    color: var(--color-text-muted);
+/* ─── Mobile hamburger button ─────────────────────── */
+.layout__menu-btn {
+    display: none;
+}
+
+/* ─── Mobile overlay ─────────────────────────────── */
+.layout__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 49;
+}
+
+/* ─── Responsive ──────────────────────────────────── */
+@media (max-width: 768px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .layout__main {
+        padding: var(--spacing-4);
+    }
+
+    .layout__menu-btn {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        width: 40px;
+        height: 40px;
+        background: var(--color-canvas-subtle);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        padding: 9px 8px;
+        margin-bottom: var(--spacing-4);
+        flex-shrink: 0;
+    }
+
+    .layout__menu-btn span {
+        display: block;
+        width: 100%;
+        height: 2px;
+        background: var(--color-text);
+        border-radius: 2px;
+    }
 }
