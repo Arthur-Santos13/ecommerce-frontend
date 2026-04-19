@@ -28,6 +28,7 @@
     --color-primary: #0969da;
     --color-primary-hover: #0550ae;
     --color-primary-fg: #ffffff;
+    --color-primary-subtle: rgba(9, 105, 218, 0.08);
 
     /* Semantic */
     --color-success: #1a7f37;
@@ -37,47 +38,52 @@
     --color-danger: #d1242f;
     --color-danger-subtle: #ffebe9;
 
-    /* Header (always dark even in light mode — matches GitHub) */
+    /* Header */
     --color-header-bg: #24292f;
     --color-header-text: #f0f6fc;
     --color-header-text-muted: #7d8590;
     --color-header-border: #444c56;
     --color-header-logo: #f0f6fc;
+
+    /* Typography */
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+
+    /* Spacing */
+    --spacing-1: 0.25rem;
+    --spacing-2: 0.5rem;
+    --spacing-3: 0.75rem;
+    --spacing-4: 1rem;
+    --spacing-5: 1.25rem;
+    --spacing-6: 1.5rem;
+    --spacing-8: 2rem;
+    --spacing-10: 2.5rem;
+    --spacing-16: 4rem;
+    --header-height: 64px;
+    --sidebar-width: 240px;
+    --container-max: 1200px;
+
+    /* Radius */
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+
+    /* Shadow */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-normal: 250ms ease;
 }
 
 /* ─── CSS Custom Properties — Dark ─────────────────── */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --color-background: #0d1117;
-        --color-canvas-subtle: #161b22;
-        --color-surface: #0d1117;
-
-        --color-border: #30363d;
-        --color-border-muted: #21262d;
-
-        --color-text: #e6edf3;
-        --color-text-muted: #7d8590;
-        --color-text-link: #2f81f7;
-
-        --color-primary: #2f81f7;
-        --color-primary-hover: #1f6feb;
-        --color-primary-fg: #ffffff;
-
-        --color-success: #3fb950;
-        --color-success-subtle: #0f2d1a;
-        --color-warning: #d29922;
-        --color-warning-subtle: #272115;
-        --color-danger: #f85149;
-        --color-danger-subtle: #2d0f12;
-
-        --color-header-bg: #161b22;
-        --color-header-text: #e6edf3;
-        --color-header-text-muted: #7d8590;
-        --color-header-border: #30363d;
-        --color-header-logo: #e6edf3;
-    }
-}
-
 [data-theme='dark'] {
     --color-background: #0d1117;
     --color-canvas-subtle: #161b22;
@@ -93,6 +99,7 @@
     --color-primary: #2f81f7;
     --color-primary-hover: #1f6feb;
     --color-primary-fg: #ffffff;
+    --color-primary-subtle: rgba(47, 129, 247, 0.12);
 
     --color-success: #3fb950;
     --color-success-subtle: #0f2d1a;
@@ -106,47 +113,6 @@
     --color-header-text-muted: #7d8590;
     --color-header-border: #30363d;
     --color-header-logo: #e6edf3;
-}
-
-/* Typography */
---font-sans: 'Inter',
-system-ui,
--apple-system,
-sans-serif;
---font-size-sm: 0.875rem;
---font-size-base: 1rem;
---font-size-lg: 1.125rem;
---font-size-xl: 1.25rem;
---font-size-2xl: 1.5rem;
---font-size-3xl: 1.875rem;
-
-/* Spacing */
---spacing-1: 0.25rem;
---spacing-2: 0.5rem;
---spacing-3: 0.75rem;
---spacing-4: 1rem;
---spacing-6: 1.5rem;
---spacing-8: 2rem;
---spacing-12: 3rem;
---spacing-16: 4rem;
-
-/* Layout */
---container-max: 1280px;
---header-height: 64px;
-
-/* Radius */
---radius-sm: 4px;
---radius-md: 8px;
---radius-lg: 12px;
-
-/* Shadow */
---shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
---shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
---shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-
-/* Transitions */
---transition-fast: 150ms ease;
---transition-normal: 250ms ease;
 }
 
 /* ─── Base ──────────────────────────────────────────── */
@@ -163,6 +129,7 @@ body {
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 200ms ease, color 200ms ease;
 }
 
 img,
