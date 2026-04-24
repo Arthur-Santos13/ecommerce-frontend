@@ -11,6 +11,7 @@ Frontend application for the ecommerce-microservices-kafka platform. Communicate
 - [Estrutura do projeto](#estrutura-do-projeto)
 - [Fluxo de autenticação](#fluxo-de-autenticação)
 - [Integração com o backend](#integração-com-o-backend)
+- [Painel administrativo](#painel-administrativo)
 - [Design system](#design-system)
 - [Testes](#testes)
 - [Estratégia de branches](#estratégia-de-branches)
@@ -77,15 +78,19 @@ All requests go through a single `apiClient` (Axios instance). The request inter
 src/
 ├── app/
 │   ├── context/          # ThemeContext — manual dark/light toggle
-│   ├── layouts/          # RootLayout (sidebar), AuthLayout, Sidebar, Header
+│   ├── layouts/          # RootLayout, AuthLayout, AdminLayout, Sidebar, AdminSidebar, Header
 │   ├── styles/           # global.css (design tokens), per-page CSS
 │   └── router.tsx        # Route tree — lazy-loaded, role-guarded
 ├── features/
 │   ├── auth/             # Login, Register, JWT handling, ProtectedRoute, GuestRoute, RequireRole
-│   ├── product/          # Product list (filters, pagination, sort), product detail
+│   ├── product/          # Product list/detail (user) + admin CRUD (AdminProductListPage,
+│   │                   #   AdminProductFormPage, AdminCategoryPage)
 │   ├── cart/             # Zustand cart store, CartPage, localStorage persistence
 │   ├── order/            # Order creation, list, detail, cancellation, polling
+│   │                   #   + admin view (AdminOrderListPage)
 │   └── notification/     # Toast system, NotificationStore (Zustand)
+│                           #   + admin history (AdminNotificationPage)
+│                           #   pages/admin/ → AdminNotificationPage
 ├── services/
 │   ├── apiClient.ts      # Axios instance — baseURL, 9 s timeout
 │   ├── interceptors.ts   # JWT injection, X-Correlation-Id, 401 refresh, error normalisation
@@ -151,8 +156,16 @@ Router redirects to /  (ProductListPage)
 | Create order | `POST` | `/api/v1/orders` | `order-service` |
 | List orders | `GET` | `/api/v1/orders?customerId=` | `order-service` |
 | Order detail | `GET` | `/api/v1/orders/:id` | `order-service` |
-| Cancel order | `PATCH` | `/api/v1/orders/:id/cancel` | `order-service` |
-
+| Cancel order | `PATCH` | `/api/v1/orders/:id/cancel` | `order-service` || **Admin** — create product | `POST` | `/api/v1/products` | `product-service` |
+| **Admin** — update product | `PUT` | `/api/v1/products/:id` | `product-service` |
+| **Admin** — delete product | `DELETE` | `/api/v1/products/:id` | `product-service` |
+| **Admin** — restore product | `PATCH` | `/api/v1/products/:id/restore` | `product-service` |
+| **Admin** — restock | `PATCH` | `/api/v1/products/:id/restock` | `product-service` |
+| **Admin** — create category | `POST` | `/api/v1/categories` | `product-service` |
+| **Admin** — update category | `PUT` | `/api/v1/categories/:id` | `product-service` |
+| **Admin** — delete category | `DELETE` | `/api/v1/categories/:id` | `product-service` |
+| **Admin** — all orders | `GET` | `/api/v1/orders` | `order-service` |
+| **Admin** — all notifications | `GET` | `/api/v1/notifications` | `notification-service` |
 ### HTTP client configuration
 
 | Setting | Value | Reason |
@@ -180,6 +193,42 @@ The response interceptor maps every HTTP error to a typed `ApiException` before 
 ### Consistency and async states
 
 Order status is eventually consistent — payment confirmation flows through Kafka asynchronously. The order detail page polls `GET /api/v1/orders/:id` until the status leaves `AWAITING_PAYMENT`, with exponential back-off. Loading skeletons and status badges reflect every intermediate state (`AWAITING_PAYMENT`, `CONFIRMED`, `CANCELLED`).
+
+---
+
+## Painel administrativo
+
+Users with the `ADMIN` role have access to a dedicated panel at `/admin/*`, protected by the `RequireRole` guard. The panel is rendered inside `AdminLayout` (with `AdminSidebar`) and is completely isolated from the customer-facing layout.
+
+### Routes
+
+| Path | Page | Description |
+|------|------|-------------|
+| `/admin` | `AdminProductListPage` | Product catalog management |
+| `/admin/products/new` | `AdminProductFormPage` | Create a new product |
+| `/admin/products/:id/edit` | `AdminProductFormPage` | Edit an existing product |
+| `/admin/categories` | `AdminCategoryPage` | Category management with inline create/edit form |
+| `/admin/orders` | `AdminOrderListPage` | View all orders with status filter |
+| `/admin/orders/:id` | `OrderDetailPage` (reused) | Full order details |
+| `/admin/notifications` | `AdminNotificationPage` | Notification history with status filter |
+
+### Role guard
+
+```tsx
+<RequireRole roles={['ADMIN']}>
+  <AdminLayout />
+</RequireRole>
+```
+
+The `RequireRole` component checks `user.roles.includes(role)` for every role in the list. Non-admin users receive a `403` page. The `ADMIN` nav link in the main sidebar is shown only when `useHasRole('ADMIN')` is `true`.
+
+### Admin sidebar sections
+
+| Section | Links |
+|---------|-------|
+| Catalog | Products, Categories |
+| Operations | Orders, Notifications |
+| Store | Back to Store |
 
 ---
 
@@ -290,4 +339,5 @@ VITE_API_BASE_URL=http://localhost:8080
 - [x] 10. Segurança frontend — sanitização, CSRF, headers, renovação de token
 - [x] 11. Integração final com o backend — validação end-to-end de todos os fluxos
 - [x] 12. Testes — unitários, integração e async states
-- [x] 13. README final
+- [x] 13. Painel administrativo — AdminLayout, AdminSidebar, gerenciamento de produtos/categorias, visualização de pedidos e histórico de notificações
+- [x] 14. README final
