@@ -55,6 +55,55 @@ const router = createBrowserRouter([
             },
         ],
     },
+    // ── Admin routes ─────────────────────────────────────────────────────────
+    {
+        path: '/admin',
+        lazy: () => import('@/app/layouts/AdminLayout').then((m) => ({ Component: m.default })),
+        children: [
+            {
+                element: <ProtectedRoute />,
+                children: [
+                    {
+                        element: <RequireRole roles={['ADMIN']} redirectTo="/" />,
+                        children: [
+                            {
+                                index: true,
+                                lazy: () => import('@/features/product/pages/admin/AdminProductListPage').then((m) => ({ Component: m.default })),
+                            },
+                            {
+                                path: 'products',
+                                lazy: () => import('@/features/product/pages/admin/AdminProductListPage').then((m) => ({ Component: m.default })),
+                            },
+                            {
+                                path: 'products/new',
+                                lazy: () => import('@/features/product/pages/admin/AdminProductFormPage').then((m) => ({ Component: m.default })),
+                            },
+                            {
+                                path: 'products/:id/edit',
+                                lazy: () => import('@/features/product/pages/admin/AdminProductFormPage').then((m) => ({ Component: m.default })),
+                            },
+                            {
+                                path: 'categories',
+                                lazy: () => import('@/features/product/pages/admin/AdminCategoryPage').then((m) => ({ Component: m.default })),
+                            },
+                            {
+                                path: 'orders',
+                                lazy: () => import('@/features/order/pages/admin/AdminOrderListPage').then((m) => ({ Component: m.default })),
+                            },
+                            {
+                                path: 'orders/:id',
+                                lazy: () => import('@/features/order/pages/OrderDetailPage').then((m) => ({ Component: m.default })),
+                            },
+                            {
+                                path: 'notifications',
+                                lazy: () => import('@/features/notification/pages/AdminNotificationPage').then((m) => ({ Component: m.default })),
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    },
 ])
 
 export default router

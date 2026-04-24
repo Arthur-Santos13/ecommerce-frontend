@@ -216,3 +216,30 @@
         background-color: var(--color-border-muted);
     }
 }
+
+/* ─── Admin sidebar variants ─────────────────────────────────── */
+.sidebar__brand-sub--admin {
+    color: var(--color-warning, #d97706);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.sidebar__user-avatar--admin {
+    background-color: var(--color-warning, #d97706);
+}
+
+.sidebar__user-role--admin {
+    color: var(--color-warning, #d97706);
+    font-weight: 600;
+}
+
+.sidebar__nav-section {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+    padding: var(--spacing-3) var(--spacing-4) var(--spacing-1);
+    margin-top: var(--spacing-2);
+}
