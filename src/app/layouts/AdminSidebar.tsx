@@ -1,19 +1,15 @@
 import { NavLink } from 'react-router-dom'
 import { useAuthContext } from '@/features/auth/context/AuthContext'
-import { useHasRole } from '@/features/auth/hooks/useHasRole'
-import { useCartStore } from '@/store/cartStore'
 import { useTheme } from '@/app/context/ThemeContext'
 import '@/app/styles/sidebar.css'
 
-interface SidebarProps {
+interface AdminSidebarProps {
     isOpen?: boolean
     onClose?: () => void
 }
 
-export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
+export default function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
     const { user, logout } = useAuthContext()
-    const isAdmin = useHasRole('ADMIN')
-    const totalItems = useCartStore((s) => s.totalItems)
     const { theme, toggleTheme } = useTheme()
 
     return (
@@ -28,31 +24,31 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
 
             {/* Brand */}
             <div className="sidebar__brand">
-                <NavLink to="/" className="sidebar__brand-name">
+                <NavLink to="/admin" className="sidebar__brand-name">
                     ShopCommerce
                 </NavLink>
-                <span className="sidebar__brand-sub">E-Commerce</span>
+                <span className="sidebar__brand-sub sidebar__brand-sub--admin">Admin Panel</span>
             </div>
 
             {/* User */}
             {user && (
                 <div className="sidebar__user">
-                    <div className="sidebar__user-avatar">
+                    <div className="sidebar__user-avatar sidebar__user-avatar--admin">
                         {user.username.charAt(0).toUpperCase()}
                     </div>
                     <div className="sidebar__user-info">
                         <span className="sidebar__user-name">{user.username}</span>
-                        <span className="sidebar__user-role">{user.roles[0] ?? 'USER'}</span>
+                        <span className="sidebar__user-role sidebar__user-role--admin">ADMIN</span>
                     </div>
                 </div>
             )}
 
-            {/* Navigation */}
+            {/* Admin Navigation */}
             {user && (
-                <nav className="sidebar__nav" aria-label="Main navigation">
+                <nav className="sidebar__nav" aria-label="Admin navigation">
+                    <span className="sidebar__nav-section">Catalog</span>
                     <NavLink
-                        to="/"
-                        end
+                        to="/admin/products"
                         className={({ isActive }) =>
                             `sidebar__nav-link${isActive ? ' sidebar__nav-link--active' : ''}`
                         }
@@ -61,19 +57,18 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                         Products
                     </NavLink>
                     <NavLink
-                        to="/cart"
+                        to="/admin/categories"
                         className={({ isActive }) =>
                             `sidebar__nav-link${isActive ? ' sidebar__nav-link--active' : ''}`
                         }
                     >
-                        <IconCart />
-                        Cart
-                        {totalItems > 0 && (
-                            <span className="sidebar__nav-badge">{totalItems}</span>
-                        )}
+                        <IconCategories />
+                        Categories
                     </NavLink>
+
+                    <span className="sidebar__nav-section">Operations</span>
                     <NavLink
-                        to="/orders"
+                        to="/admin/orders"
                         className={({ isActive }) =>
                             `sidebar__nav-link${isActive ? ' sidebar__nav-link--active' : ''}`
                         }
@@ -81,17 +76,26 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                         <IconOrders />
                         Orders
                     </NavLink>
-                    {isAdmin && (
-                        <NavLink
-                            to="/admin"
-                            className={({ isActive }) =>
-                                `sidebar__nav-link${isActive ? ' sidebar__nav-link--active' : ''}`
-                            }
-                        >
-                            <IconAdmin />
-                            Admin Panel
-                        </NavLink>
-                    )}
+                    <NavLink
+                        to="/admin/notifications"
+                        className={({ isActive }) =>
+                            `sidebar__nav-link${isActive ? ' sidebar__nav-link--active' : ''}`
+                        }
+                    >
+                        <IconNotifications />
+                        Notifications
+                    </NavLink>
+
+                    <span className="sidebar__nav-section">Store</span>
+                    <NavLink
+                        to="/"
+                        className={({ isActive }) =>
+                            `sidebar__nav-link${isActive ? ' sidebar__nav-link--active' : ''}`
+                        }
+                    >
+                        <IconStorefront />
+                        Back to Store
+                    </NavLink>
                 </nav>
             )}
 
@@ -119,7 +123,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
     )
 }
 
-// ── Inline SVG Icons ──────────────────────────────────────────────────────────
+// ── Icons ─────────────────────────────────────────────────────────────────────
 
 function IconProducts() {
     return (
@@ -132,12 +136,10 @@ function IconProducts() {
     )
 }
 
-function IconCart() {
+function IconCategories() {
     return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <circle cx="9" cy="21" r="1" />
-            <circle cx="20" cy="21" r="1" />
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            <path d="M4 6h16M4 12h16M4 18h7" />
         </svg>
     )
 }
@@ -151,10 +153,20 @@ function IconOrders() {
     )
 }
 
-function IconAdmin() {
+function IconNotifications() {
     return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+    )
+}
+
+function IconStorefront() {
+    return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
         </svg>
     )
 }

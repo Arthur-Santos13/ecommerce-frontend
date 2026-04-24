@@ -1,0 +1,319 @@
+/* ─── Admin shared layout ─────────────────────────────────────── */
+.admin-page {
+    max-width: 1100px;
+    margin: var(--spacing-8) auto;
+    padding: 0 var(--spacing-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-6);
+}
+
+.admin-page__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-4);
+}
+
+.admin-page__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.admin-page__subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin: 0;
+}
+
+/* ─── Buttons ─────────────────────────────────────────────────── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-4);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: opacity var(--transition-fast), background-color var(--transition-fast);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn--primary {
+    background-color: var(--color-primary);
+    color: var(--color-primary-fg);
+    border-color: var(--color-primary);
+}
+
+.btn--primary:hover:not(:disabled) {
+    opacity: 0.88;
+}
+
+.btn--secondary {
+    background-color: transparent;
+    color: var(--color-text);
+    border-color: var(--color-border);
+}
+
+.btn--secondary:hover:not(:disabled) {
+    background-color: var(--color-canvas-subtle);
+}
+
+.btn--danger {
+    background-color: var(--color-danger);
+    color: #fff;
+    border-color: var(--color-danger);
+}
+
+.btn--danger:hover:not(:disabled) {
+    opacity: 0.88;
+}
+
+.btn--sm {
+    padding: var(--spacing-1) var(--spacing-3);
+    font-size: 0.75rem;
+}
+
+/* ─── Admin table ─────────────────────────────────────────────── */
+.admin-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+}
+
+.admin-table th {
+    background-color: var(--color-canvas-subtle);
+    color: var(--color-text-muted);
+    font-weight: 600;
+    text-align: left;
+    padding: var(--spacing-3) var(--spacing-4);
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+}
+
+.admin-table td {
+    padding: var(--spacing-3) var(--spacing-4);
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+    vertical-align: middle;
+}
+
+.admin-table tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-table tr:hover td {
+    background-color: var(--color-canvas-subtle);
+}
+
+.admin-table__actions {
+    display: flex;
+    gap: var(--spacing-2);
+    justify-content: flex-end;
+}
+
+/* ─── Status badges ───────────────────────────────────────────── */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.badge--success {
+    background-color: var(--color-success-subtle, #dcfce7);
+    color: var(--color-success, #16a34a);
+}
+
+.badge--danger {
+    background-color: var(--color-danger-subtle, #fee2e2);
+    color: var(--color-danger, #dc2626);
+}
+
+.badge--warning {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.badge--info {
+    background-color: var(--color-primary-subtle);
+    color: var(--color-primary);
+}
+
+.badge--muted {
+    background-color: var(--color-border);
+    color: var(--color-text-muted);
+}
+
+/* ─── Admin form ──────────────────────────────────────────────── */
+.admin-form {
+    background-color: var(--color-canvas-subtle);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    max-width: 640px;
+}
+
+.admin-form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-4);
+}
+
+.admin-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+}
+
+.admin-form__label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.admin-form__label--required::after {
+    content: ' *';
+    color: var(--color-danger);
+}
+
+.admin-form__input,
+.admin-form__select,
+.admin-form__textarea {
+    padding: var(--spacing-2) var(--spacing-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface, var(--color-canvas));
+    color: var(--color-text);
+    font-size: var(--font-size-sm);
+    transition: border-color var(--transition-fast);
+}
+
+.admin-form__input:focus,
+.admin-form__select:focus,
+.admin-form__textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-subtle);
+}
+
+.admin-form__input--error,
+.admin-form__select--error,
+.admin-form__textarea--error {
+    border-color: var(--color-danger);
+}
+
+.admin-form__error {
+    font-size: 0.75rem;
+    color: var(--color-danger);
+}
+
+.admin-form__textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.admin-form__actions {
+    display: flex;
+    gap: var(--spacing-3);
+    padding-top: var(--spacing-2);
+}
+
+/* ─── Modal / confirm dialog ──────────────────────────────────── */
+.admin-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-4);
+}
+
+.admin-modal {
+    background: var(--color-canvas);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-6);
+    max-width: 420px;
+    width: 100%;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+}
+
+.admin-modal__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.admin-modal__body {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin: 0;
+}
+
+.admin-modal__actions {
+    display: flex;
+    gap: var(--spacing-3);
+    justify-content: flex-end;
+}
+
+/* ─── Empty state ─────────────────────────────────────────────── */
+.admin-empty {
+    text-align: center;
+    padding: var(--spacing-10, 4rem) var(--spacing-4);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+}
+
+/* ─── Inventory badge ─────────────────────────────────────────── */
+.stock-value {
+    font-weight: 600;
+}
+
+.stock-value--low {
+    color: var(--color-danger);
+}
+
+.stock-value--ok {
+    color: var(--color-success, #16a34a);
+}
+
+@media (max-width: 640px) {
+    .admin-form__row {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-page__header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

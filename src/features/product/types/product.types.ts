@@ -4,6 +4,11 @@ export interface CategoryResponse {
     description: string | null
 }
 
+export interface CategoryRequest {
+    name: string
+    description?: string
+}
+
 export interface ProductResponse {
     id: string
     name: string
@@ -17,6 +22,19 @@ export interface ProductResponse {
     category: CategoryResponse | null
     createdAt: string
     updatedAt: string
+}
+
+export interface ProductRequest {
+    name: string
+    description?: string
+    price: number
+    sku: string
+    categoryId?: string
+    quantityInStock: number
+}
+
+export interface StockAdjustmentRequest {
+    quantity: number
 }
 
 export interface PageResponse<T> {

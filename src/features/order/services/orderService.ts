@@ -16,6 +16,10 @@ export const orderService = {
             .then((r) => r.data)
     },
 
+    findAll(): Promise<OrderResponse[]> {
+        return apiClient.get<OrderResponse[]>('/api/v1/orders').then((r) => r.data)
+    },
+
     cancel(id: string): Promise<OrderResponse> {
         return apiClient.patch<OrderResponse>(`/api/v1/orders/${id}/cancel`).then((r) => r.data)
     },

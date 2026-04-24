@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { parseApiError } from '@/services'
 import { ErrorState, Skeleton } from '@/shared'
 import { orderService } from '../services/orderService'
@@ -9,6 +9,8 @@ import '@/app/styles/order.css'
 
 export default function OrderDetailPage() {
     const { id } = useParams<{ id: string }>()
+    const location = useLocation()
+    const isAdmin = location.pathname.startsWith('/admin')
     const { order, loading, error, polling, refresh } = useOrderPolling(id)
     const push = useNotificationStore((s) => s.push)
     const [cancelling, setCancelling] = useState(false)
@@ -71,8 +73,11 @@ export default function OrderDetailPage() {
     return (
         <div className="order-detail">
             <nav className="order-detail__breadcrumb" aria-label="Breadcrumb">
-                <Link to="/orders" className="order-detail__breadcrumb-link">
-                    My Orders
+                <Link
+                    to={isAdmin ? '/admin/orders' : '/orders'}
+                    className="order-detail__breadcrumb-link"
+                >
+                    {isAdmin ? 'Orders' : 'My Orders'}
                 </Link>
                 <span className="order-detail__breadcrumb-sep" aria-hidden="true">/</span>
                 <span>#{order.id.slice(0, 8).toUpperCase()}</span>
