@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { parseApiError } from '@/services'
 import { ErrorState } from '@/shared'
-import type { OrderResponse, OrderStatus } from '../types/order.types'
-import { orderService } from '../services/orderService'
+import type { OrderResponse, OrderStatus } from '../../types/order.types'
+import { orderService } from '../../services/orderService'
 import '@/app/styles/admin.css'
 
 const STATUS_BADGE: Record<OrderStatus, string> = {
