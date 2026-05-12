@@ -328,6 +328,106 @@
     font-size: 0.875rem;
 }
 
+.order-detail__payment-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1rem;
+    margin: 0 1.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.order-detail__payment-label {
+    font-weight: 600;
+    color: var(--color-text-muted);
+}
+
+.order-detail__payment-value {
+    color: var(--color-text);
+}
+
+.order-detail__pay-instructions {
+    margin: 0 1.5rem 1.25rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-canvas-subtle);
+}
+
+.order-detail__pay-instructions-title {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.order-detail__pay-instructions-hint {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    line-height: 1.45;
+}
+
+.order-detail__pay-instructions-code {
+    margin: 0 0 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--color-canvas);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    word-break: break-all;
+    white-space: pre-wrap;
+    max-height: 10rem;
+    overflow: auto;
+}
+
+.order-detail__pay-instructions-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.order-detail__copy-pay-btn {
+    padding: 0.5rem 1rem;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.order-detail__copy-pay-btn:hover {
+    opacity: 0.9;
+}
+
+.order-detail__pay-instructions-error,
+.order-detail__pay-instructions-pending {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+}
+
+.order-detail__pay-instructions-error {
+    color: var(--color-danger);
+}
+
+.order-detail__pay-external-id {
+    margin: 0.75rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+}
+
+.order-detail__pay-external-id code {
+    font-size: 0.75rem;
+    padding: 0.125rem 0.375rem;
+    background: var(--color-canvas);
+    border-radius: 4px;
+}
+
 .order-detail__confirmed-notice {
     margin: 0 1.5rem 1rem;
     padding: 0.75rem 1rem;

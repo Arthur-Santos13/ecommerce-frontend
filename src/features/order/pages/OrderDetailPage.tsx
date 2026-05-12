@@ -1,11 +1,19 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { parseApiError } from '@/services'
 import { ErrorState, Skeleton } from '@/shared'
 import { orderService } from '../services/orderService'
+import { paymentService } from '@/features/payment/services/paymentService'
+import type { PaymentResponse } from '@/features/payment/types/payment.types'
 import { useOrderPolling } from '@/hooks/useOrderPolling'
 import { useNotificationStore } from '@/store/notificationStore'
+import { paymentMethodLabel } from '../utils/paymentMethodLabel'
+import type { PaymentMethod } from '../types/order.types'
 import '@/app/styles/order.css'
+
+function isOfflineRail(method?: PaymentMethod): boolean {
+    return method === 'PIX' || method === 'BANK_SLIP'
+}
 
 export default function OrderDetailPage() {
     const { id } = useParams<{ id: string }>()
@@ -15,6 +23,43 @@ export default function OrderDetailPage() {
     const push = useNotificationStore((s) => s.push)
     const [cancelling, setCancelling] = useState(false)
     const [cancelError, setCancelError] = useState<string | null>(null)
+    const [paymentInfo, setPaymentInfo] = useState<PaymentResponse | null>(null)
+    const [paymentFetchError, setPaymentFetchError] = useState(false)
+
+    useEffect(() => {
+        if (!order || order.status !== 'AWAITING_PAYMENT') {
+            setPaymentInfo(null)
+            setPaymentFetchError(false)
+            return
+        }
+        let cancelled = false
+        setPaymentFetchError(false)
+        void paymentService
+            .findByOrderId(order.id)
+            .then((p) => {
+                if (!cancelled) setPaymentInfo(p)
+            })
+            .catch(() => {
+                if (!cancelled) {
+                    setPaymentInfo(null)
+                    setPaymentFetchError(true)
+                }
+            })
+        return () => {
+            cancelled = true
+        }
+    }, [order?.id, order?.status, order?.updatedAt])
+
+    const copyPaymentInstructions = useCallback(async () => {
+        const text = paymentInfo?.paymentInstructions
+        if (!text) return
+        try {
+            await navigator.clipboard.writeText(text)
+            push('success', 'Payment details copied to clipboard.')
+        } catch {
+            push('error', 'Could not copy to clipboard.')
+        }
+    }, [paymentInfo?.paymentInstructions, push])
 
     async function handleCancel() {
         if (!order) return
@@ -69,6 +114,9 @@ export default function OrderDetailPage() {
     if (!order) return null
 
     const canCancel = order.status === 'AWAITING_PAYMENT'
+    const showPayRail =
+        order.status === 'AWAITING_PAYMENT' && isOfflineRail(order.paymentMethod)
+    const instructions = paymentInfo?.paymentInstructions
 
     return (
         <div className="order-detail">
@@ -107,10 +155,61 @@ export default function OrderDetailPage() {
                     </div>
                 </div>
 
+                <div className="order-detail__payment-meta">
+                    <span className="order-detail__payment-label">Payment method</span>
+                    <span className="order-detail__payment-value">
+                        {paymentMethodLabel(order.paymentMethod)}
+                    </span>
+                </div>
+
                 {order.status === 'AWAITING_PAYMENT' && (
                     <div className="order-detail__awaiting-notice">
                         <strong>Awaiting payment confirmation.</strong> Your order was received and
                         is being processed. This page updates automatically.
+                    </div>
+                )}
+
+                {showPayRail && (
+                    <div className="order-detail__pay-instructions">
+                        <h2 className="order-detail__pay-instructions-title">How to pay</h2>
+                        {paymentFetchError && (
+                            <p className="order-detail__pay-instructions-error">
+                                Could not load payment instructions. Use Refresh or try again shortly.
+                            </p>
+                        )}
+                        {!paymentFetchError && instructions && (
+                            <>
+                                <p className="order-detail__pay-instructions-hint">
+                                    {order.paymentMethod === 'PIX'
+                                        ? 'Copy the PIX code below and pay in your banking app.'
+                                        : 'Use the digitable line below to pay at banks, ATMs, or apps that accept boletos.'}
+                                </p>
+                                <pre className="order-detail__pay-instructions-code" tabIndex={0}>
+                                    {instructions}
+                                </pre>
+                                <div className="order-detail__pay-instructions-actions">
+                                    <button
+                                        type="button"
+                                        className="order-detail__copy-pay-btn"
+                                        onClick={() => void copyPaymentInstructions()}
+                                    >
+                                        Copy to clipboard
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                        {!paymentFetchError && !instructions && paymentInfo && (
+                            <p className="order-detail__pay-instructions-pending">
+                                Payment instructions are not available yet — this page will refresh
+                                automatically.
+                            </p>
+                        )}
+                        {paymentInfo?.externalTransactionId && (
+                            <p className="order-detail__pay-external-id">
+                                <span className="order-detail__payment-label">Reference</span>{' '}
+                                <code>{paymentInfo.externalTransactionId}</code>
+                            </p>
+                        )}
                     </div>
                 )}
 
@@ -212,4 +311,3 @@ export default function OrderDetailPage() {
         </div>
     )
 }
-
