@@ -40,6 +40,16 @@ describe('orderService — async flow', () => {
         expect(created.id).toBe(mockOrder.id)
     })
 
+    it('create forwards paymentMethod and echoes it in the response', async () => {
+        seedToken()
+        const created = await orderService.create({
+            customerId: MOCK_CUSTOMER_ID,
+            items: [{ productId: mockOrder.items[0].productId, quantity: 1 }],
+            paymentMethod: 'PIX',
+        })
+        expect(created.paymentMethod).toBe('PIX')
+    })
+
     it('cancel returns the order with CANCELLED status', async () => {
         seedToken()
         const cancelled = await orderService.cancel(mockOrder.id)

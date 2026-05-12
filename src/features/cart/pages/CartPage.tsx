@@ -3,9 +3,17 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useCartStore } from '@/store/cartStore'
 import { useAuthContext } from '@/features/auth/context/AuthContext'
 import { orderService } from '@/features/order/services/orderService'
+import type { PaymentMethod } from '@/features/order/types/order.types'
 import { parseApiError } from '@/services'
 import { useNotificationStore } from '@/store/notificationStore'
 import '@/app/styles/cart.css'
+
+const PAYMENT_OPTIONS: { value: PaymentMethod; label: string }[] = [
+    { value: 'CREDIT_CARD', label: 'Credit card' },
+    { value: 'DEBIT_CARD', label: 'Debit card' },
+    { value: 'PIX', label: 'PIX' },
+    { value: 'BANK_SLIP', label: 'Bank slip (boleto)' },
+]
 
 export default function CartPage() {
     const { items, totalItems, totalPrice, removeItem, updateQuantity, clearCart } = useCartStore()
@@ -14,6 +22,7 @@ export default function CartPage() {
     const push = useNotificationStore((s) => s.push)
     const [submitting, setSubmitting] = useState(false)
     const [orderError, setOrderError] = useState<string | null>(null)
+    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('CREDIT_CARD')
 
     async function handlePlaceOrder() {
         if (!user || items.length === 0) return
@@ -23,6 +32,7 @@ export default function CartPage() {
             const order = await orderService.create({
                 customerId: user.id,
                 items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+                paymentMethod,
             })
             clearCart()
             push('info', 'Order placed! Waiting for payment confirmation.')
@@ -107,6 +117,24 @@ export default function CartPage() {
                 ))}
             </ul>
 
+            <fieldset className="cart__payment-method" disabled={submitting}>
+                <legend className="cart__payment-legend">Payment method</legend>
+                <div className="cart__payment-options" role="radiogroup" aria-label="Payment method">
+                    {PAYMENT_OPTIONS.map((opt) => (
+                        <label key={opt.value} className="cart__payment-option">
+                            <input
+                                type="radio"
+                                name="paymentMethod"
+                                value={opt.value}
+                                checked={paymentMethod === opt.value}
+                                onChange={() => setPaymentMethod(opt.value)}
+                            />
+                            <span>{opt.label}</span>
+                        </label>
+                    ))}
+                </div>
+            </fieldset>
+
             <div className="cart__footer">
                 <button className="cart__clear-btn" onClick={clearCart} disabled={submitting}>
                     Clear Cart
@@ -134,4 +162,3 @@ export default function CartPage() {
         </div>
     )
 }
-

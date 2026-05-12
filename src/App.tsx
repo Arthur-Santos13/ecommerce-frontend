@@ -7,7 +7,7 @@ function App() {
     return (
         <ThemeProvider>
             <AuthProvider>
-                <RouterProvider router={router} fallbackElement={null} />
+                <RouterProvider router={router} />
             </AuthProvider>
         </ThemeProvider>
     )

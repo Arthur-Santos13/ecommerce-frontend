@@ -34,6 +34,7 @@ export const mockOrder = {
     id: 'order-0001-0000-0000-000000000001',
     customerId: MOCK_CUSTOMER_ID,
     status: 'AWAITING_PAYMENT' as const,
+    paymentMethod: 'CREDIT_CARD' as const,
     totalAmount: 4999.9,
     items: [
         {
@@ -48,6 +49,31 @@ export const mockOrder = {
     failureReason: null,
     createdAt: '2026-04-18T10:00:00',
     updatedAt: '2026-04-18T10:00:00',
+}
+
+/** Last `paymentMethod` from `POST /orders` — drives GET order + payment mocks in tests. */
+let lastOrderPaymentMethod: 'CREDIT_CARD' | 'DEBIT_CARD' | 'PIX' | 'BANK_SLIP' = 'CREDIT_CARD'
+
+export function resetCheckoutMocks() {
+    lastOrderPaymentMethod = 'CREDIT_CARD'
+}
+
+export function getLastCheckoutPaymentMethod() {
+    return lastOrderPaymentMethod
+}
+
+export const mockPaymentAwaitingPix = {
+    id: 'pay-0001-0000-0000-000000000001',
+    orderId: mockOrder.id,
+    customerId: MOCK_CUSTOMER_ID,
+    amount: mockOrder.totalAmount,
+    status: 'AWAITING_PAYMENT' as const,
+    method: 'PIX' as const,
+    failureReason: null,
+    externalTransactionId: 'sim-pix-mock',
+    paymentInstructions: '00020126580014br.gov.bcb.pix0136mockpix5204000053039865802BR5925Test',
+    createdAt: '2026-04-18T10:05:00',
+    updatedAt: '2026-04-18T10:05:00',
 }
 
 // ── Default handlers ─────────────────────────────────────────────────────────
@@ -77,12 +103,55 @@ export const handlers = [
     ),
 
     // Orders
-    http.get(`${BASE}/api/v1/orders`, () => HttpResponse.json([mockOrder])),
-    http.post(`${BASE}/api/v1/orders`, () => HttpResponse.json(mockOrder, { status: 201 })),
+    http.get(`${BASE}/api/v1/orders`, () =>
+        HttpResponse.json([{ ...mockOrder, paymentMethod: lastOrderPaymentMethod }]),
+    ),
+    http.post(`${BASE}/api/v1/orders`, async ({ request }) => {
+        let body: Record<string, unknown> = {}
+        try {
+            body = (await request.json()) as Record<string, unknown>
+        } catch {
+            /* no body */
+        }
+        const pm = (body.paymentMethod as typeof lastOrderPaymentMethod) ?? 'CREDIT_CARD'
+        lastOrderPaymentMethod = pm
+        return HttpResponse.json(
+            {
+                ...mockOrder,
+                paymentMethod: pm,
+                customerId: (body.customerId as string) ?? mockOrder.customerId,
+            },
+            { status: 201 },
+        )
+    }),
     http.get(`${BASE}/api/v1/orders/:id`, ({ params }) =>
-        HttpResponse.json({ ...mockOrder, id: params.id as string }),
+        HttpResponse.json({
+            ...mockOrder,
+            id: params.id as string,
+            paymentMethod: lastOrderPaymentMethod,
+        }),
     ),
     http.patch(`${BASE}/api/v1/orders/:id/cancel`, ({ params }) =>
         HttpResponse.json({ ...mockOrder, id: params.id as string, status: 'CANCELLED' }),
     ),
+
+    // Payments (order-scoped)
+    http.get(`${BASE}/api/v1/payments/order/:orderId`, ({ params }) => {
+        const orderId = params.orderId as string
+        const method = lastOrderPaymentMethod
+        const offline = method === 'PIX' || method === 'BANK_SLIP'
+        const slipLine = '34191.79001 01043.510047 91020.150008 1 8435005999.90'
+        return HttpResponse.json({
+            ...mockPaymentAwaitingPix,
+            orderId,
+            method,
+            paymentInstructions: offline
+                ? method === 'BANK_SLIP'
+                    ? slipLine
+                    : mockPaymentAwaitingPix.paymentInstructions
+                : null,
+            externalTransactionId: offline ? mockPaymentAwaitingPix.externalTransactionId : null,
+            status: offline ? ('AWAITING_PAYMENT' as const) : ('PAID' as const),
+        })
+    }),
 ]
