@@ -2,6 +2,7 @@ import '@testing-library/jest-dom'
 import { afterEach, beforeAll, afterAll, vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
 import { server } from './mocks/server'
+import { resetCheckoutMocks } from './mocks/handlers'
 
 // jsdom does not implement matchMedia — provide a minimal stub
 Object.defineProperty(window, 'matchMedia', {
@@ -23,5 +24,6 @@ afterEach(() => {
     server.resetHandlers()
     cleanup()
     localStorage.clear()
+    resetCheckoutMocks()
 })
 afterAll(() => server.close())
