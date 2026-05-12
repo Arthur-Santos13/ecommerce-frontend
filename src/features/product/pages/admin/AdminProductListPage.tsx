@@ -40,15 +40,6 @@ export default function AdminProductListPage() {
         }
     }
 
-    async function handleRestore(id: string) {
-        try {
-            const restored = await productService.restore(id)
-            setProducts((prev) => prev.map((p) => (p.id === id ? restored : p)))
-        } catch (err) {
-            setError(parseApiError(err).message)
-        }
-    }
-
     return (
         <div className="admin-page">
             <div className="admin-page__header">
