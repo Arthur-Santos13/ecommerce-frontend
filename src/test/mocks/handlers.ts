@@ -34,6 +34,7 @@ export const mockOrder = {
     id: 'order-0001-0000-0000-000000000001',
     customerId: MOCK_CUSTOMER_ID,
     status: 'AWAITING_PAYMENT' as const,
+    paymentMethod: 'CREDIT_CARD' as const,
     totalAmount: 4999.9,
     items: [
         {
