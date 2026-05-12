@@ -1,6 +1,6 @@
 # ecommerce-frontend
 
-Frontend application for the ecommerce-microservices-kafka platform. Communicates exclusively with the API Gateway (`localhost:8080`) and reflects the full order lifecycle — from product browsing through payment confirmation — driven by the backend's event-driven architecture.
+Frontend application for the ecommerce-microservices-kafka platform. Communicates exclusively with the API Gateway (`localhost:8080`) and reflects the full order lifecycle — from product browsing through **checkout (payment method choice)** and **payment confirmation / offline instructions (PIX, boleto)** — aligned with the backend's event-driven flow.
 
 ---
 
@@ -35,7 +35,7 @@ Frontend application for the ecommerce-microservices-kafka platform. Communicate
   │           │                                       │
   │  ┌────────▼────────────────────────────────────┐  │
   │  │              Feature Modules                │  │
-  │  │  product  │  cart  │  order  │  notification│  │
+  │  │  product │ cart │ order │ payment │ notification│
   │  └────────────────────┬────────────────────────┘  │
   │                       │ Axios (apiClient)          │
   │                       │ JWT + X-Correlation-Id     │
@@ -85,12 +85,11 @@ src/
 │   ├── auth/             # Login, Register, JWT handling, ProtectedRoute, GuestRoute, RequireRole
 │   ├── product/          # Product list/detail (user) + admin CRUD (AdminProductListPage,
 │   │                   #   AdminProductFormPage, AdminCategoryPage)
-│   ├── cart/             # Zustand cart store, CartPage, localStorage persistence
-│   ├── order/            # Order creation, list, detail, cancellation, polling
-│   │                   #   + admin view (AdminOrderListPage)
-│   └── notification/     # Toast system, NotificationStore (Zustand)
-│                           #   + admin history (AdminNotificationPage)
-│                           #   pages/admin/ → AdminNotificationPage
+│   ├── cart/             # Zustand cart store, CartPage (payment method at checkout), persistence
+│   ├── order/            # Orders: create/list/detail/cancel, polling, payment method labels,
+│   │                   #   offline pay block on detail when AWAITING_PAYMENT + PIX/boleto
+│   ├── payment/          # paymentService — GET payment by order id (gateway → payment-service)
+│   └── notification/     # Toast (Zustand) + AdminNotificationPage
 ├── services/
 │   ├── apiClient.ts      # Axios instance — baseURL, 9 s timeout
 │   ├── interceptors.ts   # JWT injection, X-Correlation-Id, 401 refresh, error normalisation
@@ -106,7 +105,7 @@ src/
     ├── unit/             # Component and utility unit tests
     ├── integration/      # Service layer and page async-state tests
     ├── utils/            # renderWithProviders helper
-    └── setup.ts          # MSW lifecycle + jest-dom + matchMedia polyfill
+    └── setup.ts          # MSW lifecycle, jest-dom, matchMedia, reset de mocks de checkout após cada teste
 ```
 
 ---
@@ -153,13 +152,15 @@ Router redirects to /  (ProductListPage)
 | List products | `GET` | `/api/v1/products` | `product-service` |
 | Product detail | `GET` | `/api/v1/products/:id` | `product-service` |
 | List categories | `GET` | `/api/v1/categories` | `product-service` |
-| Create order | `POST` | `/api/v1/orders` | `order-service` |
+| Create order | `POST` | `/api/v1/orders` (body: `items`, `customerId`, optional `paymentMethod`) | `order-service` |
 | List orders | `GET` | `/api/v1/orders?customerId=` | `order-service` |
 | Order detail | `GET` | `/api/v1/orders/:id` | `order-service` |
-| Cancel order | `PATCH` | `/api/v1/orders/:id/cancel` | `order-service` || **Admin** — create product | `POST` | `/api/v1/products` | `product-service` |
+| Cancel order | `PATCH` | `/api/v1/orders/:id/cancel` | `order-service` |
+| Payment by order | `GET` | `/api/v1/payments/order/:orderId` | `payment-service` |
+| **Admin** — create product | `POST` | `/api/v1/products` | `product-service` |
 | **Admin** — update product | `PUT` | `/api/v1/products/:id` | `product-service` |
 | **Admin** — delete product | `DELETE` | `/api/v1/products/:id` | `product-service` |
-| **Admin** — restore product | `PATCH` | `/api/v1/products/:id/restore` | `product-service` |
+| **Admin** — restore product | `PATCH` | `/api/v1/products/:id/restore` | `product-service` (API disponível; UI de restauração pode ser evoluída depois) |
 | **Admin** — restock | `PATCH` | `/api/v1/products/:id/restock` | `product-service` |
 | **Admin** — create category | `POST` | `/api/v1/categories` | `product-service` |
 | **Admin** — update category | `PUT` | `/api/v1/categories/:id` | `product-service` |
@@ -192,7 +193,11 @@ The response interceptor maps every HTTP error to a typed `ApiException` before 
 
 ### Consistency and async states
 
-Order status is eventually consistent — payment confirmation flows through Kafka asynchronously. The order detail page polls `GET /api/v1/orders/:id` until the status leaves `AWAITING_PAYMENT`, with exponential back-off. Loading skeletons and status badges reflect every intermediate state (`AWAITING_PAYMENT`, `CONFIRMED`, `CANCELLED`).
+Order status is eventually consistent — payment confirmation flows through Kafka asynchronously. The order detail page **polls** `GET /api/v1/orders/:id` on a fixed interval while the order is non-terminal, so the UI picks up `CONFIRMED`, `PAYMENT_FAILED`, or `CANCELLED` without a manual refresh.
+
+When the order is `AWAITING_PAYMENT` and the customer chose an **offline rail** (`PIX` or `BANK_SLIP`), the page also calls `GET /api/v1/payments/order/:orderId` to show **digitable line / PIX copy-and-paste**, reference id, and copy-to-clipboard. Card rails do not show that block; the order row still shows the selected **payment method** label.
+
+Loading skeletons and status badges reflect intermediate states (`AWAITING_PAYMENT`, `CONFIRMED`, `CANCELLED`, `PAYMENT_FAILED`).
 
 ---
 
@@ -253,9 +258,9 @@ Responsive breakpoints: `768px` (sidebar collapses to drawer, hamburger appears)
 ## Testes
 
 ```bash
-npm test          # watch mode
-npm run test:run  # single run (CI)
-npm run coverage  # coverage report
+npm run test:watch   # Vitest watch mode
+npm test             # single run (CI / local)
+npm run test:coverage
 ```
 
 ### Test structure
@@ -276,8 +281,10 @@ npm run coverage  # coverage report
 | `ProductCard.tsx` | Renders price/name, disabled state on zero stock |
 | `ErrorState.tsx` | Error message render, retry callback |
 | `ProtectedRoute.tsx` | Redirect when unauthenticated, render children when authenticated |
-| `orderService.ts` | Successful fetch, 500 error mapping, 401 surface |
+| `orderService.ts` | Successful fetch, 500 error mapping, 401 surface; `create` with `paymentMethod` |
+| `paymentService.ts` | GET payment by order (PIX vs card behaviour against MSW) |
 | `OrderListPage.tsx` | Loading, success, empty, error and retry → success cycle |
+| `CartPage.tsx` | Checkout sends selected `paymentMethod` on `POST /orders` (MSW) |
 
 ---
 
@@ -289,7 +296,7 @@ main          ← stable releases (tagged vN.0.0)
     └── feature/* / chore/* / fix/* / docs/* / test/*
 ```
 
-Each phase is developed on a dedicated branch, merged into `develop` via Pull Request, and promoted to `main` at phase completion.
+Each phase is developed on a dedicated branch (for example `feature/payment-checkout-frontend` for checkout and payment UX), merged into `develop` via Pull Request, and promoted to `main` at phase completion.
 
 ---
 
@@ -333,6 +340,8 @@ VITE_API_BASE_URL=http://localhost:8080
 - [x] 4. Product — types + service layer, listagem com grid, filtros (nome, categoria, faixa de preço, in stock), paginação, ordenação, página de detalhe
 - [x] 5. Carrinho — estado global com Zustand, persistência em localStorage, add/remove/update quantity, badge no header, CartPage com total
 - [x] 6. Order — criação de pedido a partir do carrinho, listagem por cliente, detalhe com itens e total, cancelamento, feedback de status
+- [x] 6b. Checkout — escolha de método de pagamento no carrinho (`CREDIT_CARD`, `DEBIT_CARD`, `PIX`, `BANK_SLIP`) enviada em `POST /api/v1/orders`
+- [x] 6c. Pagamento — detalhe do pedido: método exibido; PIX/boleto em `AWAITING_PAYMENT` com instruções via `GET /api/v1/payments/order/:orderId`
 - [x] 7. Consistência eventual — polling, estados intermediários de pedido
 - [x] 8. UX para sistema assíncrono — loading states, skeleton, feedback de operações assíncronas
 - [x] 9. Notificações — toast em tempo real via SSE/polling
